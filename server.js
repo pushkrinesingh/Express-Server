@@ -1,12 +1,13 @@
 import express from "express";
 import mongoose from "mongoose";
-
+import dotenv from "dotenv"
+dotenv.config()
 const app = express();
 app.use(express.json());
 
 const connect = mongoose
   .connect(
-    "mongodb+srv://pushkrinesingh:pushkrine123@cluster0.lh0xwp8.mongodb.net/?appName=Cluster0",
+    process.env.MONGODB_URL
   )
   .then(() => {
     console.log("DB Connection: OK, Server Running: OK");

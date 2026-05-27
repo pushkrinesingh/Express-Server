@@ -1,14 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
-import dotenv from "dotenv"
-dotenv.config()
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 app.use(express.json());
 
 const connect = mongoose
-  .connect(
-    process.env.MONGODB_URL
-  )
+  .connect(process.env.MONGODB_URL)
   .then(() => {
     console.log("DB Connection: OK, Server Running: OK");
   })
@@ -19,17 +17,25 @@ const connect = mongoose
 const userSchema = new mongoose.Schema({
   first_name: {
     type: String,
-    required: true,
+    required: [true, "First Name Is Required"],
+    minlength: 3,
+    maxlength: 30,
+    match: [/^[A-Za-z]+$/, "First name should contain only alphabets"],
   },
   last_name: {
     type: String,
-    required: true,
+    required: [true, "Last Name Is Required"],
+    minlength: 3,
+    maxlength: 30,
+    match: [/^[A-Za-z]+$/, "Last name should contain only alphabets"],
   },
 
   email: {
     type: String,
-    required: true,
+    required: [true, "Email Is Required"],
     unique: true,
+    lowercase: true,
+    match: [/^\S+@\S+\.\S+$/, "Please enter a valid email"],
   },
   gender: {
     type: String,
@@ -48,7 +54,6 @@ app.get("/", async (req, res) => {
   const users = await user.find();
   return res.json(users);
 });
-
 
 app.post("/users", async (req, res) => {
   const newuser = new user(req.body);
